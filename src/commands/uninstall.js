@@ -33,6 +33,6 @@ export default function uninstallCommand() {
     console.log(chalk.magenta('\nUninstallation finished!'));
 
   } catch (uninstallationError) {
-    console.error(chalk.red('\nError:'), uninstallationError.message);
+    console.error(chalk.red('\nError:'), uninstallationError.stack);
   }
 }

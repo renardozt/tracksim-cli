@@ -12,7 +12,8 @@ export async function downloadRemoteFile(baseUrl, filename) {
   const { data: responseData, headers: responseHeaders } = await axios({ 
     url: fileUrl, 
     method: 'GET', 
-    responseType: 'stream' 
+    responseType: 'stream',
+    family: 4
   });
   
   const totalContentLength = parseInt(responseHeaders['content-length'], 10);

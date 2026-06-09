@@ -13,7 +13,7 @@ export default async function installCommand() {
     }
 
     console.log(chalk.blueBright('Connecting to Tracksim API...'));
-    const { data: apiResponseData } = await axios.get('https://api.tracksim.app/tracker/latest-version');
+    const { data: apiResponseData } = await axios.get('https://api.tracksim.app/tracker/latest-version', { family: 4 });
     const downloadBaseUrl = apiResponseData.download_url;
 
     console.log(chalk.green(`Found version: ${apiResponseData.version} (${apiResponseData.branch})\n`));
@@ -66,6 +66,6 @@ export default async function installCommand() {
     console.log(chalk.magenta('\nInstallation finished!'));
 
   } catch (installationError) {
-    console.error(chalk.red('\nError:'), installationError.message);
+    console.error(chalk.red('\nError:'), installationError.stack);
   }
 }
