@@ -1,6 +1,6 @@
 # TrackSim Linux
 
-Native TrackSim integration and management tool for Linux (TruckersMP). This project provides a straightforward, CLI-based approach to seamlessly install and manage the TrackSim client on Linux systems.
+**An unofficial,** native TrackSim integration and management tool for Linux (TruckersMP). This project provides a straightforward, CLI-based approach to seamlessly install and manage the TrackSim client on Linux systems.
 
 ## Features
 
