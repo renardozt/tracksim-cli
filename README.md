@@ -18,7 +18,14 @@ Before installing, ensure you have the following prerequisites on your system:
 
 ## Installation
 
-Ensure you have Node.js and your preferred package manager (npm or pnpm) installed. First, install the project dependencies, and then install the package globally:
+First, clone the repository to your local machine:
+
+```bash
+git clone https://github.com/renardozt/tracksim-linux.git
+cd tracksim-linux
+```
+
+Next, ensure you have Node.js and your preferred package manager (npm or pnpm) installed. Install the project dependencies, and then install the package globally:
 
 ```bash
 # Install local dependencies
