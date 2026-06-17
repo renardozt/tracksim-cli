@@ -50,6 +50,8 @@ export default function uninstallCommand(gameId, options) {
   } catch (error) {
     console.error(chalk.red('\nError:'), error.message);
     if (process.env.DEBUG) console.error(error.stack);
+    process.exit(1);
   }
 }
+
 
