@@ -96,7 +96,7 @@ tracksim-cli install ets2 --game-dir "D:\Games\Steam\steamapps\common\Euro Truck
 
 ## Known Issues / Limitations
 
-- **Tracksim Discord RPC (Linux)**: Discord Rich Presence currently fails to initialize and synchronize within the TrackSim client under Linux Proton.
+- **Tracksim Discord RPC (Linux)**: Discord Rich Presence currently fails to initialize and synchronize within the TrackSim client under Linux Proton (Wine).
 
 ## License
 
