@@ -1,6 +1,6 @@
 # TrackSim CLI
 
-Native TrackSim integration and management tool for Windows and Linux. This project provides a robust, seamless approach to install and manage the TrackSim client for **Euro Truck Simulator 2 (ETS2)** and **American Truck Simulator (ATS)**.
+**An unofficial,** native TrackSim integration and management tool for Windows and Linux. This project provides a robust, seamless approach to install and manage the TrackSim client for **Euro Truck Simulator 2 (ETS2)** and **American Truck Simulator (ATS)**.
 
 ## Features
 
