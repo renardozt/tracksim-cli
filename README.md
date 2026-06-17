@@ -21,8 +21,8 @@ The easiest way to get started. These scripts will automatically verify your env
 
 First, clone the repository or download the source code:
 ```bash
-git clone https://github.com/renardozt/tracksim-linux.git
-cd tracksim-linux
+git clone https://github.com/renardozt/tracksim-cli.git
+cd tracksim-cli
 ```
 
 #### Windows Users
@@ -54,8 +54,8 @@ Install the CLI tool globally on your system:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/renardozt/tracksim-linux.git
-cd tracksim-linux
+git clone https://github.com/renardozt/tracksim-cli.git
+cd tracksim-cli
 
 # 2. Install local dependencies
 pnpm install
