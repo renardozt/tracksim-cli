@@ -2,24 +2,38 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import axios from 'axios';
-import { getConfiguration, createDefaultConfiguration, downloadDirectory } from '../config.js';
-import { downloadRemoteFile } from '../utils.js';
+import { getConfiguration, saveConfiguration, downloadDirectory } from '../config.js';
+import { resolveGameSetup, getPluginsDirectory, getProgramDataDirectory } from '../gamePathResolver.js';
+import { downloadRemoteFile, copyFileIfExists } from '../utils.js';
+import { TRACKSIM_API_URL, FILES } from '../constants.js';
 
-export default async function installCommand() {
+export default async function installCommand(gameId, options) {
   try {
-    let configurationData = getConfiguration();
-    if (!configurationData) {
-      configurationData = createDefaultConfiguration();
+    const configurationData = getConfiguration();
+    
+    // 1. Resolve Setup
+    const setup = resolveGameSetup(gameId, options, configurationData);
+    
+    console.log(chalk.cyan(`Game Data Directory: ${setup.dataDir}`));
+    if (!setup.isWin) {
+      console.log(chalk.cyan(`Proton Prefix Directory: ${setup.prefixDir}`));
     }
 
-    console.log(chalk.blueBright('Connecting to Tracksim API...'));
-    const { data: apiResponseData } = await axios.get('https://api.tracksim.app/tracker/latest-version', { family: 4 });
+    // 2. Save Configuration
+    if (!configurationData.games) configurationData.games = {};
+    configurationData.games[setup.game.id] = { dataDir: setup.dataDir, prefixDir: setup.prefixDir };
+    saveConfiguration(configurationData);
+
+    // 3. Download API Data
+    console.log(chalk.blueBright('\nConnecting to Tracksim API...'));
+    const { data: apiResponseData } = await axios.get(TRACKSIM_API_URL, { family: 4 });
     const downloadBaseUrl = apiResponseData.download_url;
 
     console.log(chalk.green(`Found version: ${apiResponseData.version} (${apiResponseData.branch})\n`));
     
     fs.ensureDirSync(downloadDirectory);
 
+    // 4. Download Files
     for (const remoteFile of apiResponseData.files) {
       await downloadRemoteFile(downloadBaseUrl, remoteFile.filename);
     }
@@ -27,45 +41,40 @@ export default async function installCommand() {
     console.log(chalk.greenBright('\nDownload complete!'));
     console.log(chalk.yellow('Proceeding with installation...'));
     
-    const gamePluginsDirectory = path.join(configurationData.ets2DataDir, 'bin', 'win_x64', 'plugins');
+    // 5. Install telemetry.dll
+    const gamePluginsDirectory = getPluginsDirectory(setup.dataDir);
     fs.ensureDirSync(gamePluginsDirectory);
 
-    const downloadedTelemetryDllPath = path.join(downloadDirectory, 'telemetry.dll');
-    const targetTelemetryDllPath = path.join(gamePluginsDirectory, 'telemetry.dll');
+    copyFileIfExists(
+      path.join(downloadDirectory, FILES.TELEMETRY_DLL),
+      path.join(gamePluginsDirectory, FILES.TELEMETRY_DLL),
+      `${FILES.TELEMETRY_DLL} successfully copied to plugins folder.`,
+      `telemetry.dll not found in downloaded files!`
+    );
 
-    if (fs.existsSync(downloadedTelemetryDllPath)) {
-      fs.copyFileSync(downloadedTelemetryDllPath, targetTelemetryDllPath);
-      console.log(chalk.greenBright(`✓ telemetry.dll successfully copied to plugins folder.`));
-    } else {
-      throw new Error('telemetry.dll not found in downloaded files!');
-    }
-
-    const downloadedTracksimExePath = path.join(downloadDirectory, 'tracksim.exe');
-    const downloadedUpdaterExePath = path.join(downloadDirectory, 'updater.exe');
-    
-    const gameProgramDataDirectory = path.join(configurationData.ets2PrefixDir, 'drive_c', 'ProgramData', 'TrackSim');
+    // 6. Install tracksim.exe and updater.exe
+    const gameProgramDataDirectory = getProgramDataDirectory(setup.prefixDir);
     fs.ensureDirSync(gameProgramDataDirectory);
     
-    const targetTracksimExePath = path.join(gameProgramDataDirectory, 'tracksim.exe');
-    const targetUpdaterExePath = path.join(gameProgramDataDirectory, 'updater.exe');
-    
-    if (fs.existsSync(downloadedTracksimExePath)) {
-      fs.copyFileSync(downloadedTracksimExePath, targetTracksimExePath);
-      console.log(chalk.greenBright(`✓ tracksim.exe successfully copied to ProgramData folder.`));
-    } else {
-      console.log(chalk.red('Warning: tracksim.exe not found in downloaded files!'));
-    }
+    copyFileIfExists(
+      path.join(downloadDirectory, FILES.TRACKSIM_EXE),
+      path.join(gameProgramDataDirectory, FILES.TRACKSIM_EXE),
+      `${FILES.TRACKSIM_EXE} successfully copied to ProgramData folder.`,
+      `Warning: ${FILES.TRACKSIM_EXE} not found in downloaded files!`
+    );
 
-    if (fs.existsSync(downloadedUpdaterExePath)) {
-      fs.copyFileSync(downloadedUpdaterExePath, targetUpdaterExePath);
-      console.log(chalk.greenBright(`✓ updater.exe successfully copied to ProgramData folder.`));
-    } else {
-      console.log(chalk.red('Warning: updater.exe not found in downloaded files!'));
-    }
+    copyFileIfExists(
+      path.join(downloadDirectory, FILES.UPDATER_EXE),
+      path.join(gameProgramDataDirectory, FILES.UPDATER_EXE),
+      `${FILES.UPDATER_EXE} successfully copied to ProgramData folder.`,
+      `Warning: ${FILES.UPDATER_EXE} not found in downloaded files!`
+    );
 
     console.log(chalk.magenta('\nInstallation finished!'));
 
-  } catch (installationError) {
-    console.error(chalk.red('\nError:'), installationError.stack);
+  } catch (error) {
+    console.error(chalk.red('\nError:'), error.message);
+    if (process.env.DEBUG) console.error(error.stack);
   }
 }
+

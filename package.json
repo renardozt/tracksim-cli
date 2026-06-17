@@ -1,11 +1,11 @@
 {
-  "name": "tracksim-linux",
-  "version": "0.2.1",
+  "name": "tracksim-cli",
+  "version": "0.3.0",
   "type": "module",
-  "description": "Native TrackSim integration and management tool for Linux (TruckersMP)",
+  "description": "Native TrackSim integration and management CLI tool",
   "main": "index.js",
   "bin": {
-    "tracksim-linux": "./index.js"
+    "tracksim-cli": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

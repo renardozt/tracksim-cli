@@ -11,18 +11,22 @@ const { version } = require('./package.json');
 const program = new Command();
 
 program
-  .name('tracksim-linux')
-  .description('Native Tracksim integration and management tool for Linux (TruckersMP)')
+  .name('tracksim-cli')
+  .description('Native Tracksim integration and management CLI tool')
   .version(`v${version}`);
 
 program
-  .command('install')
-  .description('Downloads Tracksim and installs it into the TruckersMP Wine prefix')
+  .command('install <game>')
+  .description('Downloads Tracksim and installs it into the specified game (ets2 or ats)')
+  .option('--game-dir <path>', 'Manually specify the game data directory')
+  .option('--prefix-dir <path>', 'Manually specify the game Proton prefix directory')
   .action(installCommand);
 
 program
-  .command('uninstall')
-  .description('Removes Tracksim from the TruckersMP Wine prefix')
+  .command('uninstall <game>')
+  .description('Removes Tracksim from the specified game (ets2 or ats)')
+  .option('--game-dir <path>', 'Manually specify the game data directory')
+  .option('--prefix-dir <path>', 'Manually specify the game Proton prefix directory')
   .action(uninstallCommand);
 
 program.parse(process.argv);

@@ -1,58 +1,103 @@
-# TrackSim Linux
+# TrackSim CLI
 
-Native TrackSim integration and management tool for Linux (TruckersMP). This project provides a straightforward, CLI-based approach to seamlessly install and manage the TrackSim client on Linux systems.
+Native TrackSim integration and management tool for Windows and Linux. This project provides a robust, seamless approach to install and manage the TrackSim client for **Euro Truck Simulator 2 (ETS2)** and **American Truck Simulator (ATS)**.
 
 ## Features
 
-- **Automated Installation**: Downloads the latest TrackSim client directly from the official API.
-- **Wine Prefix Integration**: Automatically installs `tracksim.exe` and `updater.exe` into your TruckersMP Wine prefix.
-- **Easy Uninstallation**: Completely removes the TrackSim integration and associated configurations with a single command.
+- **Cross-Platform Compatibility**: Fully supports native Windows installations and Linux Proton (Wine) environments, including native `truckersmp-cli` setups.
+- **Automated Deployments**: Installs dependencies (Node.js & pnpm) and fetches the latest TrackSim client directly from the official API automatically.
+- **Smart Path Auto-Detection**: Intelligently locates your Steam installations and Wine prefixes across multiple drives and library folders without manual intervention.
+- **Clean Uninstallation**: Completely purges the TrackSim integration and associated configurations securely via a single command.
 
-## Requirements
+---
 
-Before installing, ensure you have the following prerequisites on your system:
+## 🚀 Installation & Usage
 
-- **Node.js**: Version 16 or newer.
-- **Package Manager**: `npm` or `pnpm`.
-- **TruckersMP**: `truckersmp-cli` must be installed natively and run at least once so that the game data and Wine prefix directories exist.
+You can deploy and manage TrackSim via our fully **Automated Scripts** (Recommended) or through a **Manual CLI Installation** for advanced users.
 
-## Installation
+### Method 1: Automated Installation (Recommended)
 
-First, clone the repository to your local machine:
+The easiest way to get started. These scripts will automatically verify your environment, install Node.js and `pnpm` if they are missing, install all required dependencies, and prompt you interactively to choose your game.
 
+First, clone the repository or download the source code:
 ```bash
 git clone https://github.com/renardozt/tracksim-linux.git
 cd tracksim-linux
 ```
 
-Next, ensure you have Node.js and your preferred package manager (npm or pnpm) installed. Install the project dependencies, and then install the package globally:
+#### Windows Users
+Simply double-click the batch files, or run them from your Command Prompt/PowerShell:
+- **To Install**: Run `install.bat`
+- **To Uninstall**: Run `uninstall.bat`
+
+*Note: If Node.js is missing, the scripts will securely utilize `winget` to install it. You may need to restart your terminal/script afterward.*
+
+#### Linux Users
+Open your terminal in the directory and execute the shell scripts:
+- **To Install**: Run `./install.sh`
+- **To Uninstall**: Run `./uninstall.sh`
+
+*Note: The Linux scripts will automatically detect your package manager (`apt`, `pacman`, `dnf`, or `zypper`) to install prerequisites if needed.*
+
+---
+
+### Method 2: Manual CLI Installation
+
+If you prefer managing global packages and running commands directly, you can install `tracksim-cli` system-wide.
+
+#### Prerequisites
+- **Node.js**: Version 16.x or newer.
+- **Package Manager**: `pnpm` (Highly Recommended) or `npm`.
+
+#### Global Setup
+Install the CLI tool globally on your system:
 
 ```bash
-# Install local dependencies
-npm install # or pnpm install
+# 1. Clone the repository
+git clone https://github.com/renardozt/tracksim-linux.git
+cd tracksim-linux
 
-# Install the CLI tool globally
-sudo npm install -g .
+# 2. Install local dependencies
+pnpm install
+
+# 3. Install the CLI globally
+# Note: On Linux, depending on your environment, you may need to prefix this with `sudo`
+pnpm install -g .
 ```
 
-## Usage
-
-You can use the CLI tool to manage your TrackSim integration for TruckersMP:
+#### CLI Usage
+Once installed globally, the `tracksim-cli` command becomes available anywhere in your terminal.
 
 ```bash
-tracksim-linux install
-tracksim-linux uninstall
+# Install TrackSim
+tracksim-cli install ets2
+tracksim-cli install ats
+
+# Uninstall TrackSim
+tracksim-cli uninstall ets2
+tracksim-cli uninstall ats
 ```
 
-### Commands
+#### Advanced Manual Overrides
+If your game is installed in a non-standard location and auto-detection fails, you can explicitly define your paths using flags:
 
-- `install`: Downloads TrackSim and installs it into your TruckersMP Wine prefix. Supports native `truckersmp-cli` environments.
-- `uninstall`: Removes TrackSim components and configurations from your TruckersMP Wine prefix.
+```bash
+# Linux (Wine) Example
+tracksim-cli install ets2 --game-dir /path/to/game/data --prefix-dir /path/to/wine/prefix
 
-## Known Issues / Not Working
+# Windows Example (Note: --prefix-dir is safely ignored on Windows)
+tracksim-cli install ets2 --game-dir "D:\Games\Steam\steamapps\common\Euro Truck Simulator 2"
+```
 
-- **Tracksim Discord RPC**: Discord Rich Presence currently fails to initialize within the TrackSim client. While `truckersmp-cli` handles IPC bridging, TrackSim is currently unable to properly connect to the mapped Discord IPC pipe.
+- `--game-dir`: The directory containing the game executable and `bin` folder.
+- `--prefix-dir`: The Wine prefix directory (e.g., `compatdata/<AppID>/pfx`). 
+
+---
+
+## Known Issues / Limitations
+
+- **Tracksim Discord RPC (Linux)**: Discord Rich Presence currently fails to initialize and synchronize within the TrackSim client under Linux Proton.
 
 ## License
 
-This project is licensed under the Apache-2.0 License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache-2.0 License. See the [LICENSE](LICENSE) file for full details.
